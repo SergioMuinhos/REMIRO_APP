@@ -1,0 +1,17 @@
+{
+  "name": "Exact x Forestall - Control de Obras",
+  "short_name": "ExF Obras",
+  "description": "Gestión de partes de trabajo y hojas de inspección para obras.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0a0c14",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
