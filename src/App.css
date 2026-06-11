@@ -775,7 +775,7 @@
 .border-double-t { border-top: 3px double #000000 !important; }
 .border-double-b { border-bottom: 3px double #000000 !important; }
 
-/* Header Grid */
+/* Header Grid (Rows 1-4: Height 25px each) */
 .sheet-header-table {
   width: 100%;
   border-collapse: collapse;
@@ -784,13 +784,13 @@
 
 .sheet-header-table td {
   border: 1px solid #000;
-  padding: 6px 10px;
+  padding: 0 10px;
   vertical-align: middle;
+  height: 25px;
 }
 
 .logo-cell {
-  width: 35%;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 800;
   letter-spacing: -0.5px;
 }
@@ -802,21 +802,19 @@
 }
 
 .title-cell {
-  width: 50%;
   text-align: center;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.5px;
 }
 
 .x-cell {
-  width: 15%;
   text-align: center;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 300;
 }
 
-/* Metadata Form Fields Table */
+/* Metadata Form Fields Table (Rows 5-7: Height 31px each) */
 .sheet-meta-table {
   width: 100%;
   border-collapse: collapse;
@@ -827,7 +825,7 @@
   border: 1px solid #000;
   padding: 3px 6px;
   font-size: 8px;
-  height: 22px;
+  height: 31px;
 }
 
 .meta-label {
@@ -843,59 +841,51 @@
   font-size: 8.5px;
 }
 
-/* Main Inspection Table */
+/* Main Inspection Table (Rows 8-29: Height 31px each) */
 .sheet-main-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 10px; /* space between main table and bottom blocks */
 }
 
-.sheet-main-table th, 
+.sheet-main-table th {
+  border: 1px solid #000;
+  padding: 2px 3px;
+  text-align: center;
+  font-size: 6.5px;
+  height: 31px;
+  background-color: #ffffff;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
 .sheet-main-table td {
   border: 1px solid #000;
   padding: 2px 3px;
   text-align: center;
   font-size: 7.5px;
-  height: 17px;
+  height: 31px;
 }
 
-.sheet-main-table th {
-  background-color: #ffffff;
-  font-weight: 600;
-  font-size: 6.5px;
-  vertical-align: middle;
-}
-
-.col-ref { width: 10%; }
-.col-lote { width: 12%; }
-.col-etiqueta { width: 10%; }
-.col-fecha { width: 12%; }
-.col-cant { width: 8%; }
-.col-ok { width: 8%; }
-.col-nok-sub { width: 3.2%; font-size: 6px !important; }
-.col-rw-sub { width: 3.2%; font-size: 6px !important; }
-
-/* Bottom Layout (Height: exactly 237px aligned) */
+/* Bottom Layout (Height: exactly 434px aligned) */
 .sheet-bottom-layout {
   display: flex;
   gap: 16px; /* Split column space */
   width: 100%;
-  height: 237px; /* Aligns left and right perfectly */
+  height: 434px; /* Aligns left and right perfectly */
 }
 
 .sheet-bottom-left {
-  width: 50%;
   display: flex;
   flex-direction: column;
 }
 
 .sheet-bottom-right {
-  width: 50%;
   display: flex;
   flex-direction: column;
 }
 
-/* Left side layout elements */
+/* Left side layout elements (5 NOK defects, 3 Supervision rows, 5 Observaciones rows, 1 TOTAL row = 14 rows total) */
 .sheet-defects-table-nok {
   width: 100%;
   border-collapse: collapse;
@@ -906,7 +896,7 @@
   border: 1px solid #000;
   padding: 2.5px 4px;
   font-size: 7.5px;
-  height: 15px; /* 5 rows * 15px = 75px */
+  height: 31px; /* 5 rows * 31px = 155px */
 }
 
 .sheet-staff-table {
@@ -919,7 +909,7 @@
   border: 1px solid #000;
   padding: 3px 5px;
   font-size: 7.5px;
-  height: 18px; /* 3 rows * 18px = 54px */
+  height: 31px; /* 3 rows * 31px = 93px */
 }
 
 .sheet-obs-box {
@@ -927,13 +917,13 @@
   border: 1px solid #000;
   padding: 4px 6px;
   margin-bottom: 6px;
-  height: 90px; /* 5 rows * 18px = 90px */
+  height: 155px; /* 5 rows * 31px = 155px */
   display: flex;
   flex-direction: column;
 }
 
 .sheet-obs-label {
-  font-size: 6px;
+  font-size: 6.5px;
   color: #444;
   margin-bottom: 2px;
 }
@@ -948,16 +938,16 @@
   width: 100%;
   border: 3px double #000000;
   padding: 3px 6px;
-  height: 18px; /* 1 row * 18px = 18px */
+  height: 31px; /* 1 row * 31px = 31px */
   display: flex;
   align-items: center;
   justify-content: flex-start;
   font-weight: 800;
-  font-size: 8px;
+  font-size: 8.5px;
   background-color: #ffffff;
 }
 
-/* Right side layout elements */
+/* Right side layout elements (5 RW defects, 2 Collab headers, 7 Collab data rows = 14 rows total) */
 .sheet-defects-table-rw {
   width: 100%;
   border-collapse: collapse;
@@ -968,13 +958,13 @@
   border: 1px solid #000;
   padding: 2.5px 4px;
   font-size: 7.5px;
-  height: 15px; /* 5 rows * 15px = 75px */
+  height: 31px; /* 5 rows * 31px = 155px */
 }
 
 .sheet-collab-table {
   width: 100%;
   border-collapse: collapse;
-  height: 162px; /* 9 rows * 18px = 162px (2 header + 7 data) */
+  height: 279px; /* 9 rows * 31px = 279px (2 header + 7 data) */
 }
 
 .sheet-collab-table th,
@@ -983,7 +973,7 @@
   padding: 3px 4px;
   text-align: center;
   font-size: 7.5px;
-  height: 18px;
+  height: 31px;
 }
 
 .sheet-collab-table th {
@@ -992,32 +982,26 @@
   font-weight: 600;
 }
 
-.collab-col-code { width: 18%; }
-.collab-col-hours { width: 12%; }
-.collab-col-name { width: 40%; text-align: left !important; }
-.collab-col-time { width: 15%; }
-
 .defect-label {
   color: #444;
-  width: 35%;
   font-size: 6.5px;
   background-color: #ffffff;
 }
 
 .defect-value {
   font-weight: 500;
-  width: 65%;
 }
 
-/* Final Footer Page Row */
+/* Final Footer Page Row (Row 44: Height 15pt -> 20px) */
 .sheet-footer-row {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   border-top: none;
-  padding: 6px 10px;
+  padding: 4px 10px;
   background-color: #ffffff;
   margin-top: 10px;
+  height: 20px;
 }
 
 .sheet-footer-code {

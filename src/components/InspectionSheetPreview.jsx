@@ -123,7 +123,6 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
     return dateStr;
   };
 
-  // Helper to format worker time. Displays HH:MM if set, or ':' if empty, matching Excel default
   const formatWorkerTime = (hour, minute) => {
     if (hour && minute) {
       return `${hour}:${minute}`;
@@ -131,56 +130,93 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
     return ':';
   };
 
+  // Reusable 19-column colgroup for perfect vertical alignment across top blocks (Excel Columns A to S)
+  const renderColGroup19 = () => (
+    <colgroup>
+      <col style={{ width: '11.30%' }} /> {/* A: Referencia */}
+      <col style={{ width: '10.85%' }} /> {/* B: Lote */}
+      <col style={{ width: '4.68%' }} />  {/* C: Etiqueta */}
+      <col style={{ width: '7.20%' }} />  {/* D: Fecha Prod 1 */}
+      <col style={{ width: '3.65%' }} />  {/* E: Fecha Prod 2 */}
+      <col style={{ width: '3.69%' }} />  {/* F: Cant Insp 1 */}
+      <col style={{ width: '4.37%' }} />  {/* G: Cant Insp 2 */}
+      <col style={{ width: '4.68%' }} />  {/* H: Cant OK 1 */}
+      <col style={{ width: '4.68%' }} />  {/* I: Cant OK 2 */}
+      <col style={{ width: '2.75%' }} />  {/* J: D1 */}
+      <col style={{ width: '4.68%' }} />  {/* K: D2 */}
+      <col style={{ width: '4.68%' }} />  {/* L: D3 */}
+      <col style={{ width: '4.68%' }} />  {/* M: D4 */}
+      <col style={{ width: '4.68%' }} />  {/* N: D5 */}
+      <col style={{ width: '4.68%' }} />  {/* O: RW1 */}
+      <col style={{ width: '4.68%' }} />  {/* P: RW2 */}
+      <col style={{ width: '4.68%' }} />  {/* Q: RW3 */}
+      <col style={{ width: '4.68%' }} />  {/* R: RW4 */}
+      <col style={{ width: '4.68%' }} />  {/* S: RW5 */}
+    </colgroup>
+  );
+
   const renderSheetMarkup = () => {
     return (
       <div className="ef-sheet">
         {/* 1. Header Row (Excel Rows 1-4) */}
         <table className="sheet-header-table">
+          {renderColGroup19()}
           <tbody>
             <tr>
-              <td className="logo-cell border-double-l border-double-t border-double-b">
+              <td colSpan={3} className="logo-cell border-double-l border-double-t border-double-b">
                 <span style={{ fontWeight: '800' }}>Exact</span>
                 <span className="cross">×</span>
                 <span style={{ fontWeight: '800' }}>Forestall</span>
               </td>
-              <td className="title-cell border-double-t border-double-b">Hoja de inspección</td>
-              <td className="x-cell border-double-r border-double-t border-double-b">✕</td>
+              <td colSpan={12} className="title-cell border-double-t border-double-b">Hoja de inspección</td>
+              <td colSpan={4} className="x-cell border-double-r border-double-t border-double-b">✕</td>
             </tr>
           </tbody>
         </table>
 
         {/* 2. Metadata Block (Excel Rows 5-7) */}
         <table className="sheet-meta-table">
+          {renderColGroup19()}
           <tbody>
             <tr>
-              <td className="border-double-l" style={{ width: '40%' }}>
+              <td className="border-double-l">
                 <span className="meta-label">Lugar de trabajo</span>
+              </td>
+              <td colSpan={11} className="font-bold text-left" style={{ paddingLeft: '5px' }}>
                 <span className="meta-value">{report.header.lugarTrabajo}</span>
               </td>
-              <td style={{ width: '35%' }}>
-                <span className="meta-label">Cliente</span>
-                <span className="meta-value">{report.header.cliente}</span>
-              </td>
-              <td className="border-double-l" style={{ width: '10%' }}>
+              <td className="border-double-l" colSpan={2}>
                 <span className="meta-label">Proyecto Nº</span>
+              </td>
+              <td className="border-double-r font-bold text-left" colSpan={5} style={{ paddingLeft: '5px' }}>
                 <span className="meta-value">{report.header.proyectoNo}</span>
-              </td>
-              <td style={{ width: '7%' }}>
-                <span className="meta-label">Página</span>
-                <span className="meta-value">{report.header.pagina}</span>
-              </td>
-              <td className="border-double-r" style={{ width: '8%' }}>
-                <span className="meta-label">Fecha</span>
-                <span className="meta-value">{formatSheetDate(report.header.fecha)}</span>
               </td>
             </tr>
             <tr>
-              <td className="border-double-l border-double-b" colSpan={2} style={{ height: '22px' }}>
+              <td className="border-double-l">
+                <span className="meta-label">Cliente</span>
+              </td>
+              <td colSpan={11} className="font-bold text-left" style={{ paddingLeft: '5px' }}>
+                <span className="meta-value">{report.header.cliente}</span>
+              </td>
+              <td className="border-double-l" colSpan={2}>
+                <span className="meta-label">Página</span>
+              </td>
+              <td className="border-double-r font-bold text-left" colSpan={5} style={{ paddingLeft: '5px' }}>
+                <span className="meta-value">{report.header.pagina}</span>
+              </td>
+            </tr>
+            <tr>
+              <td className="border-double-l border-double-b">
                 <span className="meta-label">Descripción del trabajo</span>
+              </td>
+              <td colSpan={11} className="font-bold text-left border-double-b" style={{ paddingLeft: '5px' }}>
                 <span className="meta-value">{report.header.descripcionTrabajo}</span>
               </td>
-              <td className="border-double-r border-double-b border-double-l" colSpan={3} style={{ height: '22px' }}>
-                <span className="meta-label">Fecha de Registro</span>
+              <td className="border-double-l border-double-b" colSpan={2}>
+                <span className="meta-label">Fecha</span>
+              </td>
+              <td className="border-double-r border-double-b font-bold text-left" colSpan={5} style={{ paddingLeft: '5px' }}>
                 <span className="meta-value">{formatSheetDate(report.header.fecha)}</span>
               </td>
             </tr>
@@ -189,6 +225,7 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
 
         {/* 3. Main Inspection Grid Table (Excel Rows 8-29) */}
         <table className="sheet-main-table">
+          {renderColGroup19()}
           <thead>
             <tr>
               <th rowSpan={2} className="col-ref border-double-l border-double-t">Referencia</th>
@@ -201,8 +238,8 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
               <th colSpan={5} className="border-double-r border-double-t" style={{ fontSize: '5.5px', padding: '1px' }}>Cantidad Retrabajada</th>
             </tr>
             <tr>
-              <th className="border-double-l" style={{ fontSize: '6px', padding: '2px 0' }}>inspeccionada</th> {/* F9 label */}
-              <th className="border-double-r" style={{ fontSize: '6px', padding: '2px 0' }}></th> {/* placeholder for colspan alignment */}
+              <th className="border-double-l" style={{ fontSize: '6px', padding: '2px 0' }}>inspeccionada</th>
+              <th className="border-double-r" style={{ fontSize: '6px', padding: '2px 0' }}></th>
               <th className="col-nok-sub">D1</th>
               <th className="col-nok-sub">D2</th>
               <th className="col-nok-sub">D3</th>
@@ -254,16 +291,16 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
           </tbody>
         </table>
 
-        {/* 4. Bottom Layout: Split side-by-side with exact spacing and row heights */}
+        {/* 4. Bottom Layout: Split side-by-side with exact Excel proportions */}
         <div className="sheet-bottom-layout">
-          {/* Left Column (5 NOK defects, 3 Supervision rows, 5 Observaciones rows, 1 TOTAL row = 14 rows total) */}
-          <div className="sheet-bottom-left">
+          {/* Left Column (Width: 37.69%) */}
+          <div className="sheet-bottom-left" style={{ width: '37.69%' }}>
             <table className="sheet-defects-table-nok">
               <tbody>
                 {Array.from({ length: 5 }).map((_, idx) => (
                   <tr key={idx}>
-                    <td className="defect-label border-double-l">Descripción del defecto NOK #{idx+1}</td>
-                    <td className="defect-value border-double-r">{report.defectsDesc?.nok?.[idx] || ''}</td>
+                    <td className="defect-label border-double-l" style={{ width: '30%' }}>Descripción del defecto NOK #{idx+1}</td>
+                    <td className="defect-value border-double-r" style={{ width: '70%' }}>{report.defectsDesc?.nok?.[idx] || ''}</td>
                   </tr>
                 ))}
               </tbody>
@@ -291,33 +328,48 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
               <div className="sheet-obs-content">{report.signatures?.observaciones}</div>
             </div>
 
-            {/* TOTAL Row (Aligned with Row 43 on the right) */}
             <div className="sheet-total-box">
               TOTAL REVISADO: {report.totals?.revisado || 0} PIEZAS // TOTAL NOK: {report.totals?.nok || 0} PIEZAS // TOTAL RECUPERADAS: {report.totals?.recuperadas || 0} PIEZAS
             </div>
           </div>
 
-          {/* Right Column (5 RW defects, 2 Collab headers, 7 Collab data rows = 14 rows total) */}
-          <div className="sheet-bottom-right">
+          {/* Right Column (Width: 62.31%) */}
+          <div className="sheet-bottom-right" style={{ width: '62.31%' }}>
             <table className="sheet-defects-table-rw">
               <tbody>
                 {Array.from({ length: 5 }).map((_, idx) => (
                   <tr key={idx}>
-                    <td className="defect-label border-double-l">Descripción del defecto Retrabajado #{idx+1}</td>
-                    <td className="defect-value border-double-r">{report.defectsDesc?.rw?.[idx] || ''}</td>
+                    <td className="defect-label border-double-l" style={{ width: '20.45%' }}>Descripción del defecto Retrabajado #{idx+1}</td>
+                    <td className="defect-value border-double-r" style={{ width: '79.55%' }}>{report.defectsDesc?.rw?.[idx] || ''}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
 
             <table className="sheet-collab-table">
+              <colgroup>
+                <col style={{ width: '5.92%' }} />  {/* F */}
+                <col style={{ width: '7.01%' }} />  {/* G */}
+                <col style={{ width: '7.51%' }} />  {/* H */}
+                <col style={{ width: '7.51%' }} />  {/* I */}
+                <col style={{ width: '4.41%' }} />  {/* J */}
+                <col style={{ width: '7.51%' }} />  {/* K */}
+                <col style={{ width: '7.51%' }} />  {/* L */}
+                <col style={{ width: '7.51%' }} />  {/* M */}
+                <col style={{ width: '7.51%' }} />  {/* N */}
+                <col style={{ width: '7.51%' }} />  {/* O */}
+                <col style={{ width: '7.51%' }} />  {/* P */}
+                <col style={{ width: '7.51%' }} />  {/* Q */}
+                <col style={{ width: '7.51%' }} />  {/* R */}
+                <col style={{ width: '7.51%' }} />  {/* S */}
+              </colgroup>
               <thead>
                 <tr>
-                  <th className="collab-col-code border-double-l" rowSpan={2} colSpan={2}>Código de colaborador</th>
-                  <th className="collab-col-hours" rowSpan={2}>Horas</th>
-                  <th className="collab-col-name" rowSpan={2} colSpan={7}>Nombre legible del trabajador:</th>
-                  <th className="collab-col-time" colSpan={2}>Entrada</th>
-                  <th className="collab-col-time border-double-r" colSpan={2}>Salida</th>
+                  <th className="border-double-l" rowSpan={2} colSpan={2}>Código de colaborador</th>
+                  <th rowSpan={2}>Horas</th>
+                  <th rowSpan={2} colSpan={7}>Nombre legible del trabajador:</th>
+                  <th colSpan={2}>Entrada</th>
+                  <th className="border-double-r" colSpan={2}>Salida</th>
                 </tr>
                 <tr>
                   <th style={{ fontSize: '5.5px', padding: '1px' }}>Hora</th>
@@ -341,13 +393,9 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
                       <td className={`text-left font-bold ${bottomClass}`} colSpan={7} style={{ paddingLeft: '6px' }}>
                         {worker.nombreTrabajador || ''}
                       </td>
-                      
-                      {/* Entrada (HH:MM / :) */}
                       <td className={`font-bold ${bottomClass}`} colSpan={2}>
                         {formatWorkerTime(worker.entradaHora, worker.entradaMinuto)}
                       </td>
-                      
-                      {/* Salida (HH:MM / :) */}
                       <td className={`font-bold border-double-r ${bottomClass}`} colSpan={2}>
                         {formatWorkerTime(worker.salidaHora, worker.salidaMinuto)}
                       </td>
