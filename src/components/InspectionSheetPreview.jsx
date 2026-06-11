@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import html2canvas from 'html2canvas';
-import { Download, Share2, Eye, Loader } from 'lucide-react';
+import { Download, Loader } from 'lucide-react';
 
 export default function InspectionSheetPreview({ report, onDownloadComplete }) {
   const offscreenRef = useRef(null);
@@ -63,7 +63,6 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
 
     handleResize();
     window.addEventListener('resize', handleResize);
-    // Extra timeout to ensure modal transition finished and DOM is fully laid out
     const timer = setTimeout(handleResize, 150);
 
     return () => {
@@ -78,7 +77,6 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
     setIsExporting(true);
 
     try {
-      // Small timeout to allow browser layout engine to settle
       await new Promise(resolve => setTimeout(resolve, 100));
 
       const captureElement = offscreenRef.current;
@@ -88,17 +86,15 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
 
       // Configure html2canvas for high quality
       const canvas = await html2canvas(captureElement, {
-        scale: 2.5, // High resolution (3000px width output)
+        scale: 2.5, // High resolution output
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false
       });
 
-      // Export as high quality JPEG
       const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
       
-      // Create download link
       const link = document.createElement('a');
       const filename = `Parte_${report.header.lugarTrabajo.replace(/\s+/g, '_')}_${report.header.fecha}.jpg`;
       link.download = filename;
@@ -118,18 +114,11 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
     }
   };
 
-  // Helper to check if a row is empty (for cell rendering)
-  const isRowEmpty = (row) => {
-    return !row.referencia && !row.numeroEtiqueta && !row.cantidadInspeccionada;
-  };
-
-  // Helper to format date display in sheet
   const formatSheetDate = (dateStr) => {
     if (!dateStr) return '';
     try {
       const parts = dateStr.split('-');
       if (parts.length === 3) {
-        // YYYY-MM-DD to DD/MM/YYYY
         return `${parts[2]}/${parts[1]}/${parts[0]}`;
       }
     } catch(e) {}
@@ -199,10 +188,10 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
               <th rowSpan={2} className="col-ref">Referencia</th>
               <th rowSpan={2} className="col-lote">Lote/Guía de envío</th>
               <th rowSpan={2} className="col-etiqueta">Número de etiqueta</th>
-              <th rowSpan={2} className="col-fecha">Fecha de producción</th>
+              <th rowSpan={2} className="col-fecha border-thick-r">Fecha de producción</th>
               <th rowSpan={2} className="col-cant">Cantidad Inspeccionada</th>
-              <th rowSpan={2} className="col-ok">Cantidad OK</th>
-              <th colSpan={5} style={{ fontSize: '5.5px', padding: '1px' }}>Cantidad NOK</th>
+              <th rowSpan={2} className="col-ok border-thick-r">Cantidad OK</th>
+              <th colSpan={5} className="border-thick-r" style={{ fontSize: '5.5px', padding: '1px' }}>Cantidad NOK</th>
               <th colSpan={5} style={{ fontSize: '5.5px', padding: '1px' }}>Cantidad Retrabajada</th>
             </tr>
             <tr>
@@ -210,7 +199,7 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
               <th className="col-nok-sub">D2</th>
               <th className="col-nok-sub">D3</th>
               <th className="col-nok-sub">D4</th>
-              <th className="col-nok-sub">D5</th>
+              <th className="col-nok-sub border-thick-r">D5</th>
               <th className="col-rw-sub">RW1</th>
               <th className="col-rw-sub">RW2</th>
               <th className="col-rw-sub">RW3</th>
@@ -220,19 +209,22 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
           </thead>
           <tbody>
             {paddedRows.map((row, idx) => {
-              const empty = isRowEmpty(row);
               return (
                 <tr key={idx}>
                   <td className="text-left font-bold" style={{ paddingLeft: '5px' }}>{row.referencia}</td>
                   <td>{row.loteGuia}</td>
                   <td className="font-bold">{row.numeroEtiqueta}</td>
-                  <td>{formatSheetDate(row.fechaProduccion)}</td>
+                  <td className="border-thick-r">{formatSheetDate(row.fechaProduccion)}</td>
                   <td className="font-bold">{row.cantidadInspeccionada}</td>
-                  <td className="font-bold">{row.cantidadOk}</td>
+                  <td className="font-bold border-thick-r">{row.cantidadOk}</td>
                   
-                  {/* NOK D1 to D5 Cells */}
+                  {/* NOK D1 to D5 Cells (with D5 thick border) */}
                   {row.nokD.map((dVal, dIdx) => (
-                    <td key={`d-${dIdx}`} style={{ color: dVal ? '#ef4444' : '#000', fontWeight: dVal ? 'bold' : 'normal' }}>
+                    <td 
+                      key={`d-${dIdx}`} 
+                      className={dIdx === 4 ? 'border-thick-r' : ''}
+                      style={{ color: dVal ? '#ef4444' : '#000', fontWeight: dVal ? 'bold' : 'normal' }}
+                    >
                       {dVal || ''}
                     </td>
                   ))}
@@ -249,22 +241,16 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
           </tbody>
         </table>
 
-        {/* 4. Bottom Layout: Defects & Workers/Signatures side-by-side */}
+        {/* 4. Bottom Layout: Split side-by-side with exact spacing */}
         <div className="sheet-bottom-layout">
-          {/* Left Side: Defect descriptions & Supervision/Obs */}
+          {/* Left Column: NOK defects & Supervision & Notes */}
           <div className="sheet-bottom-left">
-            <table className="sheet-defects-table">
+            <table className="sheet-defects-table-nok">
               <tbody>
                 {Array.from({ length: 5 }).map((_, idx) => (
                   <tr key={idx}>
                     <td className="defect-label">Descripción del defecto NOK #{idx+1}</td>
-                    <td className="defect-value" style={{ width: '65%' }}>{report.defectsDesc?.nok?.[idx] || ''}</td>
-                  </tr>
-                ))}
-                {Array.from({ length: 5 }).map((_, idx) => (
-                  <tr key={idx}>
-                    <td className="defect-label">Descripción del defecto Retrabajado #{idx+1}</td>
-                    <td className="defect-value" style={{ width: '65%' }}>{report.defectsDesc?.rw?.[idx] || ''}</td>
+                    <td className="defect-value">{report.defectsDesc?.nok?.[idx] || ''}</td>
                   </tr>
                 ))}
               </tbody>
@@ -273,8 +259,8 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
             <table className="sheet-staff-table">
               <tbody>
                 <tr>
-                  <td style={{ width: '35%', color: '#555', fontSize: '6px' }}>Responsable directo:</td>
-                  <td style={{ width: '65%', fontWeight: '700' }}>{report.signatures?.responsableDirecto}</td>
+                  <td style={{ width: '30%', color: '#555', fontSize: '6px' }}>Responsable directo:</td>
+                  <td style={{ width: '70%', fontWeight: '700' }}>{report.signatures?.responsableDirecto}</td>
                 </tr>
                 <tr>
                   <td style={{ color: '#555', fontSize: '6px' }}>Asistente de supervisión:</td>
@@ -284,20 +270,28 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
                   <td style={{ color: '#555', fontSize: '6px' }}>Cliente:</td>
                   <td style={{ fontWeight: '700' }}>{report.signatures?.cliente}</td>
                 </tr>
-                <tr>
-                  <td colSpan={2} className="obs-cell">
-                    <span style={{ color: '#555', fontSize: '6px', display: 'block', marginBottom: '2px' }}>Observaciones:</span>
-                    <span style={{ fontSize: '8px', fontWeight: '500', whiteSpace: 'pre-wrap' }}>
-                      {report.signatures?.observaciones}
-                    </span>
-                  </td>
-                </tr>
               </tbody>
             </table>
+
+            <div className="sheet-obs-box">
+              <div className="sheet-obs-label">Observaciones:</div>
+              <div className="sheet-obs-content">{report.signatures?.observaciones}</div>
+            </div>
           </div>
 
-          {/* Right Side: Collaborators table */}
+          {/* Right Column: Reworked defects & Collaborators table */}
           <div className="sheet-bottom-right">
+            <table className="sheet-defects-table-rw">
+              <tbody>
+                {Array.from({ length: 5 }).map((_, idx) => (
+                  <tr key={idx}>
+                    <td className="defect-label">Descripción del defecto Retrabajado #{idx+1}</td>
+                    <td className="defect-value">{report.defectsDesc?.rw?.[idx] || ''}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
             <table className="sheet-collab-table">
               <thead>
                 <tr>
@@ -353,14 +347,12 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
 
   return (
     <>
-      {/* 1. OFFSCREEN HIGH-RESOLUTION CONTAINER FOR CAPTURING */}
       <div className="offscreen-container">
         <div ref={offscreenRef}>
           {renderSheetMarkup(true)}
         </div>
       </div>
 
-      {/* 2. ON-SCREEN VISIBLE SCALED PREVIEW */}
       <div className="sheet-preview-wrapper">
         <div 
           ref={previewRef}
@@ -369,15 +361,14 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
             width: '1200px', 
             height: '848px', 
             transform: `scale(${scale})`,
-            marginBottom: `-${848 * (1 - scale)}px`, // offsets container height collapsing from scale
-            marginRight: `-${1200 * (1 - scale)}px` // offsets container width collapsing from scale
+            marginBottom: `-${848 * (1 - scale)}px`, 
+            marginRight: `-${1200 * (1 - scale)}px` 
           }}
         >
           {renderSheetMarkup(false)}
         </div>
       </div>
 
-      {/* Action triggers */}
       <button 
         type="button" 
         className="btn-action-modal download w-full"
@@ -391,10 +382,10 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
             <span>Generando Imagen JPG...</span>
           </>
         ) : (
-          <>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Download size={18} />
             <span>Descargar Hoja de Inspección JPG</span>
-          </>
+          </span>
         )}
       </button>
     </>

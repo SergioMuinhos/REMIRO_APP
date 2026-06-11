@@ -454,6 +454,12 @@
   transform: scale(1.1);
 }
 
+.grid-cols-5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
 .grid-cols-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -676,7 +682,6 @@
 
 .scaled-preview-container {
   transform-origin: top left;
-  /* JavaScript handles the scaling based on wrapper width */
 }
 
 .modal-actions {
@@ -744,18 +749,18 @@
    ========================================================================== */
 .ef-sheet {
   width: 1200px;
-  height: 848px; /* Standard A4 landscape aspect ratio approx. */
+  height: 848px;
   background-color: #ffffff;
   color: #000000;
   font-family: 'Inter', Arial, sans-serif;
-  padding: 16px 24px;
+  padding: 18px 24px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   position: relative;
   user-select: none;
-  font-size: 8px; /* Tight compact sizing matching original sheet */
-  line-height: 1.2;
+  font-size: 8px;
+  line-height: 1.25;
 }
 
 .ef-sheet * {
@@ -768,41 +773,40 @@
 .sheet-header-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 8px;
+  margin-bottom: 8px; /* space between header and meta */
 }
 
 .sheet-header-table td {
   border: 1px solid #000;
-  padding: 4px 6px;
+  padding: 6px 10px;
   vertical-align: middle;
 }
 
 .logo-cell {
   width: 35%;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
   letter-spacing: -0.5px;
-  padding: 6px 8px !important;
 }
 
 .logo-cell span.cross {
   font-weight: 300;
-  color: #555;
+  color: #000;
   margin: 0 4px;
 }
 
 .title-cell {
   width: 50%;
   text-align: center;
-  font-family: 'Outfit', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 .x-cell {
   width: 15%;
   text-align: center;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 300;
 }
 
@@ -810,19 +814,19 @@
 .sheet-meta-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 8px;
+  margin-bottom: 8px; /* space between meta and main table */
 }
 
 .sheet-meta-table td {
   border: 1px solid #000;
-  padding: 3px 5px;
-  font-size: 7.5px;
-  height: 18px;
+  padding: 3px 6px;
+  font-size: 8px;
+  height: 22px;
 }
 
 .meta-label {
-  color: #555;
-  font-size: 6px;
+  color: #444;
+  font-size: 6.5px;
   text-transform: capitalize;
   display: block;
   margin-bottom: 1px;
@@ -830,31 +834,35 @@
 
 .meta-value {
   font-weight: 700;
-  font-size: 8px;
+  font-size: 8.5px;
 }
 
 /* Main Inspection Table */
 .sheet-main-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 8px;
+  margin-bottom: 10px; /* space between main table and bottom blocks */
 }
 
 .sheet-main-table th, 
 .sheet-main-table td {
   border: 1px solid #000;
-  padding: 2.5px 3px;
+  padding: 2px 3px;
   text-align: center;
   font-size: 7.5px;
-  height: 16px;
+  height: 17px;
 }
 
 .sheet-main-table th {
-  background-color: #f3f4f6;
+  background-color: #ffffff;
   font-weight: 600;
-  font-size: 6px;
-  text-transform: capitalize;
+  font-size: 6.5px;
   vertical-align: middle;
+}
+
+/* Specific column thick borders */
+.border-thick-r {
+  border-right: 2.5px solid #000000 !important;
 }
 
 .col-ref { width: 10%; }
@@ -863,22 +871,21 @@
 .col-fecha { width: 12%; }
 .col-cant { width: 8%; }
 .col-ok { width: 8%; }
-.col-nok-sub { width: 3%; font-size: 6px !important; }
-.col-rw-sub { width: 3%; font-size: 6px !important; }
+.col-nok-sub { width: 3.2%; font-size: 6px !important; }
+.col-rw-sub { width: 3.2%; font-size: 6px !important; }
 
-/* Defects & Signatures Side-by-Side */
+/* Bottom Layout with Gaps */
 .sheet-bottom-layout {
   display: flex;
-  gap: 8px;
+  gap: 16px; /* Space/gap between left and right column */
   width: 100%;
-  flex: 1; /* takes remaining space to align footer exactly at bottom */
+  flex: 1;
 }
 
 .sheet-bottom-left {
   width: 50%;
   display: flex;
   flex-direction: column;
-  gap: 6px;
 }
 
 .sheet-bottom-right {
@@ -887,50 +894,73 @@
   flex-direction: column;
 }
 
-/* Defects table */
-.sheet-defects-table {
+/* Left side elements spacing */
+.sheet-defects-table-nok {
   width: 100%;
   border-collapse: collapse;
+  margin-bottom: 6px; /* gap between defects table and staff table */
 }
 
-.sheet-defects-table td {
+.sheet-defects-table-nok td {
   border: 1px solid #000;
-  padding: 2px 4px;
-  font-size: 7px;
-  height: 14px;
+  padding: 2.5px 4px;
+  font-size: 7.5px;
+  height: 15px;
 }
 
-.defect-label {
-  color: #444;
-  width: 35%;
-  font-size: 6.5px;
-}
-
-.defect-value {
-  font-weight: 500;
-}
-
-/* Staff & Observations Table */
 .sheet-staff-table {
   width: 100%;
   border-collapse: collapse;
+  margin-bottom: 6px; /* gap between staff table and observations box */
 }
 
 .sheet-staff-table td {
   border: 1px solid #000;
   padding: 3px 5px;
-  font-size: 7px;
+  font-size: 7.5px;
+  height: 18px;
 }
 
-.obs-cell {
-  height: 60px;
-  vertical-align: top;
+.sheet-obs-box {
+  width: 100%;
+  border: 1px solid #000;
+  padding: 4px 6px;
+  flex: 1;
+  min-height: 50px;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Collaborators Table */
+.sheet-obs-label {
+  font-size: 6px;
+  color: #444;
+  margin-bottom: 2px;
+}
+
+.sheet-obs-content {
+  font-size: 8px;
+  font-weight: 500;
+  white-space: pre-wrap;
+}
+
+/* Right side elements spacing */
+.sheet-defects-table-rw {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 6px; /* gap between rw defects table and collaborators table */
+}
+
+.sheet-defects-table-rw td {
+  border: 1px solid #000;
+  padding: 2.5px 4px;
+  font-size: 7.5px;
+  height: 15px;
+}
+
 .sheet-collab-table {
   width: 100%;
   border-collapse: collapse;
+  flex: 1;
 }
 
 .sheet-collab-table th,
@@ -943,15 +973,27 @@
 }
 
 .sheet-collab-table th {
-  background-color: #f3f4f6;
-  font-size: 6px;
+  background-color: #ffffff;
+  font-size: 6.5px;
   font-weight: 600;
 }
 
-.collab-col-code { width: 20%; }
+.collab-col-code { width: 18%; }
 .collab-col-hours { width: 12%; }
-.collab-col-name { width: 38%; text-align: left !important; }
+.collab-col-name { width: 40%; text-align: left !important; }
 .collab-col-time { width: 15%; }
+
+.defect-label {
+  color: #444;
+  width: 35%;
+  font-size: 6.5px;
+  background-color: #ffffff;
+}
+
+.defect-value {
+  font-weight: 500;
+  width: 65%;
+}
 
 /* Final Footer Total Row */
 .sheet-footer-row {
@@ -959,11 +1001,11 @@
   justify-content: space-between;
   align-items: center;
   border: 1px solid #000;
-  padding: 5px 8px;
-  background-color: #f3f4f6;
+  padding: 6px 10px;
+  background-color: #ffffff;
   font-weight: 800;
   font-size: 8px;
-  margin-top: auto; /* force lock at bottom */
+  margin-top: 10px; /* space above footer bar */
 }
 
 .sheet-footer-code {
