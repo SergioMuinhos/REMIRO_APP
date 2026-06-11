@@ -759,7 +759,7 @@
   flex-direction: column;
   position: relative;
   user-select: none;
-  font-size: 8px;
+  font-size: 11px; /* Excel 11pt default */
   line-height: 1.25;
 }
 
@@ -790,7 +790,7 @@
 }
 
 .logo-cell {
-  font-size: 15px;
+  font-size: 20px; /* Excel Logo area */
   font-weight: 800;
   letter-spacing: -0.5px;
 }
@@ -803,14 +803,14 @@
 
 .title-cell {
   text-align: center;
-  font-size: 13px;
+  font-size: 26px; /* Excel 26pt bold */
   font-weight: 700;
   letter-spacing: 0.5px;
 }
 
 .x-cell {
   text-align: center;
-  font-size: 18px;
+  font-size: 24px; /* Excel 24pt */
   font-weight: 300;
 }
 
@@ -824,13 +824,13 @@
 .sheet-meta-table td {
   border: 1px solid #000;
   padding: 3px 6px;
-  font-size: 8px;
+  font-size: 10px;
   height: 31px;
 }
 
 .meta-label {
   color: #444;
-  font-size: 6.5px;
+  font-size: 7px;
   text-transform: capitalize;
   display: block;
   margin-bottom: 1px;
@@ -838,7 +838,7 @@
 
 .meta-value {
   font-weight: 700;
-  font-size: 8.5px;
+  font-size: 11px; /* Excel 11pt values */
 }
 
 /* Main Inspection Table (Rows 8-29: Height 31px each) */
@@ -852,7 +852,7 @@
   border: 1px solid #000;
   padding: 2px 3px;
   text-align: center;
-  font-size: 6.5px;
+  font-size: 9px; /* Excel th */
   height: 31px;
   background-color: #ffffff;
   font-weight: 600;
@@ -863,9 +863,23 @@
   border: 1px solid #000;
   padding: 2px 3px;
   text-align: center;
-  font-size: 7.5px;
+  font-size: 10px; /* Excel td values */
   height: 31px;
 }
+
+/* Specific column thick borders */
+.border-thick-r {
+  border-right: 2.5px solid #000000 !important;
+}
+
+.col-ref { width: 11.30%; }
+.col-lote { width: 10.85%; }
+.col-etiqueta { width: 4.68%; }
+.col-fecha { width: 10.85%; }
+.col-cant { width: 8.06%; }
+.col-ok { width: 9.36%; }
+.col-nok-sub { font-size: 8px !important; }
+.col-rw-sub { font-size: 8px !important; }
 
 /* Bottom Layout (Height: exactly 434px aligned) */
 .sheet-bottom-layout {
@@ -895,7 +909,7 @@
 .sheet-defects-table-nok td {
   border: 1px solid #000;
   padding: 2.5px 4px;
-  font-size: 7.5px;
+  font-size: 10px;
   height: 31px; /* 5 rows * 31px = 155px */
 }
 
@@ -908,7 +922,7 @@
 .sheet-staff-table td {
   border: 1px solid #000;
   padding: 3px 5px;
-  font-size: 7.5px;
+  font-size: 10px;
   height: 31px; /* 3 rows * 31px = 93px */
 }
 
@@ -923,13 +937,13 @@
 }
 
 .sheet-obs-label {
-  font-size: 6.5px;
+  font-size: 7px;
   color: #444;
   margin-bottom: 2px;
 }
 
 .sheet-obs-content {
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 500;
   white-space: pre-wrap;
 }
@@ -943,7 +957,7 @@
   align-items: center;
   justify-content: flex-start;
   font-weight: 800;
-  font-size: 8.5px;
+  font-size: 14px; /* Excel 14pt bold */
   background-color: #ffffff;
 }
 
@@ -957,7 +971,7 @@
 .sheet-defects-table-rw td {
   border: 1px solid #000;
   padding: 2.5px 4px;
-  font-size: 7.5px;
+  font-size: 10px;
   height: 31px; /* 5 rows * 31px = 155px */
 }
 
@@ -972,24 +986,31 @@
   border: 1px solid #000;
   padding: 3px 4px;
   text-align: center;
-  font-size: 7.5px;
+  font-size: 10px;
   height: 31px;
 }
 
 .sheet-collab-table th {
   background-color: #ffffff;
-  font-size: 6.5px;
+  font-size: 8px;
   font-weight: 600;
 }
 
+.collab-col-code { width: 12.93%; }
+.collab-col-hours { width: 7.51%; }
+.collab-col-name { width: 49.47%; text-align: left !important; }
+.collab-col-time { width: 15.02%; }
+
 .defect-label {
   color: #444;
-  font-size: 6.5px;
+  width: 35%;
+  font-size: 9px;
   background-color: #ffffff;
 }
 
 .defect-value {
   font-weight: 500;
+  width: 65%;
 }
 
 /* Final Footer Page Row (Row 44: Height 15pt -> 20px) */
@@ -1005,7 +1026,7 @@
 }
 
 .sheet-footer-code {
-  font-size: 6.5px;
+  font-size: 11px; /* Excel 11pt */
   font-weight: 400;
   color: #444;
 }
