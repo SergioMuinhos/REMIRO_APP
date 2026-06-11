@@ -752,7 +752,7 @@
   height: 848px;
   background-color: #ffffff;
   color: #000000;
-  font-family: 'Inter', Arial, sans-serif;
+  font-family: 'Arial', sans-serif;
   padding: 18px 24px;
   box-sizing: border-box;
   display: flex;
@@ -768,6 +768,12 @@
   color: #000000;
   border-color: #000000;
 }
+
+/* Double border definitions matching Excel */
+.border-double-l { border-left: 3px double #000000 !important; }
+.border-double-r { border-right: 3px double #000000 !important; }
+.border-double-t { border-top: 3px double #000000 !important; }
+.border-double-b { border-bottom: 3px double #000000 !important; }
 
 /* Header Grid */
 .sheet-header-table {
@@ -860,11 +866,6 @@
   vertical-align: middle;
 }
 
-/* Specific column thick borders */
-.border-thick-r {
-  border-right: 2.5px solid #000000 !important;
-}
-
 .col-ref { width: 10%; }
 .col-lote { width: 12%; }
 .col-etiqueta { width: 10%; }
@@ -874,12 +875,12 @@
 .col-nok-sub { width: 3.2%; font-size: 6px !important; }
 .col-rw-sub { width: 3.2%; font-size: 6px !important; }
 
-/* Bottom Layout with Gaps */
+/* Bottom Layout (Height: exactly 237px aligned) */
 .sheet-bottom-layout {
   display: flex;
-  gap: 16px; /* Space/gap between left and right column */
+  gap: 16px; /* Split column space */
   width: 100%;
-  flex: 1;
+  height: 237px; /* Aligns left and right perfectly */
 }
 
 .sheet-bottom-left {
@@ -894,39 +895,39 @@
   flex-direction: column;
 }
 
-/* Left side elements spacing */
+/* Left side layout elements */
 .sheet-defects-table-nok {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 6px; /* gap between defects table and staff table */
+  margin-bottom: 6px;
 }
 
 .sheet-defects-table-nok td {
   border: 1px solid #000;
   padding: 2.5px 4px;
   font-size: 7.5px;
-  height: 15px;
+  height: 15px; /* 5 rows * 15px = 75px */
 }
 
 .sheet-staff-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 6px; /* gap between staff table and observations box */
+  margin-bottom: 6px;
 }
 
 .sheet-staff-table td {
   border: 1px solid #000;
   padding: 3px 5px;
   font-size: 7.5px;
-  height: 18px;
+  height: 18px; /* 3 rows * 18px = 54px */
 }
 
 .sheet-obs-box {
   width: 100%;
   border: 1px solid #000;
   padding: 4px 6px;
-  flex: 1;
-  min-height: 50px;
+  margin-bottom: 6px;
+  height: 90px; /* 5 rows * 18px = 90px */
   display: flex;
   flex-direction: column;
 }
@@ -943,24 +944,37 @@
   white-space: pre-wrap;
 }
 
-/* Right side elements spacing */
+.sheet-total-box {
+  width: 100%;
+  border: 3px double #000000;
+  padding: 3px 6px;
+  height: 18px; /* 1 row * 18px = 18px */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-weight: 800;
+  font-size: 8px;
+  background-color: #ffffff;
+}
+
+/* Right side layout elements */
 .sheet-defects-table-rw {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 6px; /* gap between rw defects table and collaborators table */
+  margin-bottom: 6px;
 }
 
 .sheet-defects-table-rw td {
   border: 1px solid #000;
   padding: 2.5px 4px;
   font-size: 7.5px;
-  height: 15px;
+  height: 15px; /* 5 rows * 15px = 75px */
 }
 
 .sheet-collab-table {
   width: 100%;
   border-collapse: collapse;
-  flex: 1;
+  height: 162px; /* 9 rows * 18px = 162px (2 header + 7 data) */
 }
 
 .sheet-collab-table th,
@@ -995,17 +1009,15 @@
   width: 65%;
 }
 
-/* Final Footer Total Row */
+/* Final Footer Page Row */
 .sheet-footer-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  border: 1px solid #000;
+  border-top: none;
   padding: 6px 10px;
   background-color: #ffffff;
-  font-weight: 800;
-  font-size: 8px;
-  margin-top: 10px; /* space above footer bar */
+  margin-top: 10px;
 }
 
 .sheet-footer-code {

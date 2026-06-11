@@ -8,7 +8,7 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
   const [scale, setScale] = useState(0.25);
   const [isExporting, setIsExporting] = useState(false);
 
-  // Pad rows to exactly 20 items to match the exact visual format of the printed sheet
+  // Pad main table rows to exactly 20 items (Excel Rows 10 to 29)
   const paddedRows = React.useMemo(() => {
     const original = report.rows || [];
     const targetLength = 20;
@@ -29,10 +29,10 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
     return result;
   }, [report.rows]);
 
-  // Pad workers to exactly 5 rows
+  // Pad workers to exactly 7 rows (Excel Rows 37 to 43)
   const paddedWorkers = React.useMemo(() => {
     const original = report.workers || [];
-    const targetLength = 5;
+    const targetLength = 7;
     const result = [...original];
     
     for (let i = original.length; i < targetLength; i++) {
@@ -55,7 +55,6 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
       const wrapper = document.querySelector('.sheet-preview-wrapper');
       if (wrapper) {
         const wrapperWidth = wrapper.clientWidth - 32; // padding
-        // Sheet is fixed 1200px wide
         const newScale = Math.min(1, wrapperWidth / 1200);
         setScale(newScale);
       }
@@ -77,14 +76,13 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
     setIsExporting(true);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 150));
 
       const captureElement = offscreenRef.current;
       if (!captureElement) {
         throw new Error('Elemento de captura no disponible');
       }
 
-      // Configure html2canvas for high quality
       const canvas = await html2canvas(captureElement, {
         scale: 2.5, // High resolution output
         useCORS: true,
@@ -125,33 +123,37 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
     return dateStr;
   };
 
-  // Renders the HTML template representing the sheet
-  const renderSheetMarkup = (isOffscreen = false) => {
+  // Helper to format worker time. Displays HH:MM if set, or ':' if empty, matching Excel default
+  const formatWorkerTime = (hour, minute) => {
+    if (hour && minute) {
+      return `${hour}:${minute}`;
+    }
+    return ':';
+  };
+
+  const renderSheetMarkup = () => {
     return (
-      <div 
-        id={isOffscreen ? 'ef-sheet-capture' : 'ef-sheet-preview'}
-        className="ef-sheet"
-      >
-        {/* 1. Header Row */}
+      <div className="ef-sheet">
+        {/* 1. Header Row (Excel Rows 1-4) */}
         <table className="sheet-header-table">
           <tbody>
             <tr>
-              <td className="logo-cell">
+              <td className="logo-cell border-double-l border-double-t border-double-b">
                 <span style={{ fontWeight: '800' }}>Exact</span>
                 <span className="cross">×</span>
                 <span style={{ fontWeight: '800' }}>Forestall</span>
               </td>
-              <td className="title-cell">Hoja de inspección</td>
-              <td className="x-cell">✕</td>
+              <td className="title-cell border-double-t border-double-b">Hoja de inspección</td>
+              <td className="x-cell border-double-r border-double-t border-double-b">✕</td>
             </tr>
           </tbody>
         </table>
 
-        {/* 2. Metadata Block */}
+        {/* 2. Metadata Block (Excel Rows 5-7) */}
         <table className="sheet-meta-table">
           <tbody>
             <tr>
-              <td style={{ width: '40%' }}>
+              <td className="border-double-l" style={{ width: '40%' }}>
                 <span className="meta-label">Lugar de trabajo</span>
                 <span className="meta-value">{report.header.lugarTrabajo}</span>
               </td>
@@ -159,7 +161,7 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
                 <span className="meta-label">Cliente</span>
                 <span className="meta-value">{report.header.cliente}</span>
               </td>
-              <td style={{ width: '10%' }}>
+              <td className="border-double-l" style={{ width: '10%' }}>
                 <span className="meta-label">Proyecto Nº</span>
                 <span className="meta-value">{report.header.proyectoNo}</span>
               </td>
@@ -167,62 +169,69 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
                 <span className="meta-label">Página</span>
                 <span className="meta-value">{report.header.pagina}</span>
               </td>
-              <td style={{ width: '8%' }}>
+              <td className="border-double-r" style={{ width: '8%' }}>
                 <span className="meta-label">Fecha</span>
                 <span className="meta-value">{formatSheetDate(report.header.fecha)}</span>
               </td>
             </tr>
             <tr>
-              <td colSpan={5} style={{ height: '18px' }}>
+              <td className="border-double-l border-double-b" colSpan={2} style={{ height: '22px' }}>
                 <span className="meta-label">Descripción del trabajo</span>
                 <span className="meta-value">{report.header.descripcionTrabajo}</span>
+              </td>
+              <td className="border-double-r border-double-b border-double-l" colSpan={3} style={{ height: '22px' }}>
+                <span className="meta-label">Fecha de Registro</span>
+                <span className="meta-value">{formatSheetDate(report.header.fecha)}</span>
               </td>
             </tr>
           </tbody>
         </table>
 
-        {/* 3. Main Inspection Grid Table */}
+        {/* 3. Main Inspection Grid Table (Excel Rows 8-29) */}
         <table className="sheet-main-table">
           <thead>
             <tr>
-              <th rowSpan={2} className="col-ref">Referencia</th>
-              <th rowSpan={2} className="col-lote">Lote/Guía de envío</th>
-              <th rowSpan={2} className="col-etiqueta">Número de etiqueta</th>
-              <th rowSpan={2} className="col-fecha border-thick-r">Fecha de producción</th>
-              <th rowSpan={2} className="col-cant">Cantidad Inspeccionada</th>
-              <th rowSpan={2} className="col-ok border-thick-r">Cantidad OK</th>
-              <th colSpan={5} className="border-thick-r" style={{ fontSize: '5.5px', padding: '1px' }}>Cantidad NOK</th>
-              <th colSpan={5} style={{ fontSize: '5.5px', padding: '1px' }}>Cantidad Retrabajada</th>
+              <th rowSpan={2} className="col-ref border-double-l border-double-t">Referencia</th>
+              <th rowSpan={2} className="col-lote border-double-t">Lote/Guia de envio</th>
+              <th rowSpan={2} className="col-etiqueta border-double-t">Número de etiqueta</th>
+              <th rowSpan={2} className="col-fecha border-double-t" colSpan={2}>Fecha de producción</th>
+              <th rowSpan={2} className="col-cant border-double-l border-double-t" colSpan={2}>Cantidad</th>
+              <th rowSpan={2} className="col-ok border-double-r border-double-t" colSpan={2}>Cantidad OK</th>
+              <th colSpan={5} className="border-double-r border-double-t" style={{ fontSize: '5.5px', padding: '1px' }}>Cantidad NOK</th>
+              <th colSpan={5} className="border-double-r border-double-t" style={{ fontSize: '5.5px', padding: '1px' }}>Cantidad Retrabajada</th>
             </tr>
             <tr>
+              <th className="border-double-l" style={{ fontSize: '6px', padding: '2px 0' }}>inspeccionada</th> {/* F9 label */}
+              <th className="border-double-r" style={{ fontSize: '6px', padding: '2px 0' }}></th> {/* placeholder for colspan alignment */}
               <th className="col-nok-sub">D1</th>
               <th className="col-nok-sub">D2</th>
               <th className="col-nok-sub">D3</th>
               <th className="col-nok-sub">D4</th>
-              <th className="col-nok-sub border-thick-r">D5</th>
+              <th className="col-nok-sub border-double-r">D5</th>
               <th className="col-rw-sub">RW1</th>
               <th className="col-rw-sub">RW2</th>
               <th className="col-rw-sub">RW3</th>
               <th className="col-rw-sub">RW4</th>
-              <th className="col-rw-sub">RW5</th>
+              <th className="col-rw-sub border-double-r">RW5</th>
             </tr>
           </thead>
           <tbody>
             {paddedRows.map((row, idx) => {
+              const bottomClass = idx === 19 ? 'border-double-b' : '';
               return (
                 <tr key={idx}>
-                  <td className="text-left font-bold" style={{ paddingLeft: '5px' }}>{row.referencia}</td>
-                  <td>{row.loteGuia}</td>
-                  <td className="font-bold">{row.numeroEtiqueta}</td>
-                  <td className="border-thick-r">{formatSheetDate(row.fechaProduccion)}</td>
-                  <td className="font-bold">{row.cantidadInspeccionada}</td>
-                  <td className="font-bold border-thick-r">{row.cantidadOk}</td>
+                  <td className={`col-ref border-double-l font-bold text-left ${bottomClass}`} style={{ paddingLeft: '5px' }}>{row.referencia}</td>
+                  <td className={`col-lote ${bottomClass}`}>{row.loteGuia}</td>
+                  <td className={`col-etiqueta font-bold ${bottomClass}`}>{row.numeroEtiqueta}</td>
+                  <td className={`col-fecha ${bottomClass}`} colSpan={2}>{formatSheetDate(row.fechaProduccion)}</td>
+                  <td className={`col-cant font-bold border-double-l ${bottomClass}`} colSpan={2}>{row.cantidadInspeccionada}</td>
+                  <td className={`col-ok border-double-r font-bold ${bottomClass}`} colSpan={2}>{row.cantidadOk}</td>
                   
-                  {/* NOK D1 to D5 Cells (with D5 thick border) */}
+                  {/* NOK D1 to D5 Cells */}
                   {row.nokD.map((dVal, dIdx) => (
                     <td 
                       key={`d-${dIdx}`} 
-                      className={dIdx === 4 ? 'border-thick-r' : ''}
+                      className={`${dIdx === 4 ? 'border-double-r' : ''} ${bottomClass}`}
                       style={{ color: dVal ? '#ef4444' : '#000', fontWeight: dVal ? 'bold' : 'normal' }}
                     >
                       {dVal || ''}
@@ -231,7 +240,11 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
                   
                   {/* RW1 to RW5 Cells */}
                   {row.rwRW.map((rwVal, rwIdx) => (
-                    <td key={`rw-${rwIdx}`} style={{ color: rwVal ? '#f59e0b' : '#000', fontWeight: rwVal ? 'bold' : 'normal' }}>
+                    <td 
+                      key={`rw-${rwIdx}`} 
+                      className={`${rwIdx === 4 ? 'border-double-r' : ''} ${bottomClass}`}
+                      style={{ color: rwVal ? '#f59e0b' : '#000', fontWeight: rwVal ? 'bold' : 'normal' }}
+                    >
                       {rwVal || ''}
                     </td>
                   ))}
@@ -241,16 +254,16 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
           </tbody>
         </table>
 
-        {/* 4. Bottom Layout: Split side-by-side with exact spacing */}
+        {/* 4. Bottom Layout: Split side-by-side with exact spacing and row heights */}
         <div className="sheet-bottom-layout">
-          {/* Left Column: NOK defects & Supervision & Notes */}
+          {/* Left Column (5 NOK defects, 3 Supervision rows, 5 Observaciones rows, 1 TOTAL row = 14 rows total) */}
           <div className="sheet-bottom-left">
             <table className="sheet-defects-table-nok">
               <tbody>
                 {Array.from({ length: 5 }).map((_, idx) => (
                   <tr key={idx}>
-                    <td className="defect-label">Descripción del defecto NOK #{idx+1}</td>
-                    <td className="defect-value">{report.defectsDesc?.nok?.[idx] || ''}</td>
+                    <td className="defect-label border-double-l">Descripción del defecto NOK #{idx+1}</td>
+                    <td className="defect-value border-double-r">{report.defectsDesc?.nok?.[idx] || ''}</td>
                   </tr>
                 ))}
               </tbody>
@@ -259,16 +272,16 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
             <table className="sheet-staff-table">
               <tbody>
                 <tr>
-                  <td style={{ width: '30%', color: '#555', fontSize: '6px' }}>Responsable directo:</td>
-                  <td style={{ width: '70%', fontWeight: '700' }}>{report.signatures?.responsableDirecto}</td>
+                  <td className="border-double-l" style={{ width: '30%', color: '#555', fontSize: '6px' }}>Responsable directo:</td>
+                  <td className="border-double-r" style={{ width: '70%', fontWeight: '700' }}>{report.signatures?.responsableDirecto}</td>
                 </tr>
                 <tr>
-                  <td style={{ color: '#555', fontSize: '6px' }}>Asistente de supervisión:</td>
-                  <td style={{ fontWeight: '700' }}>{report.signatures?.asistenteSupervision}</td>
+                  <td className="border-double-l" style={{ color: '#555', fontSize: '6px' }}>Asistente de supervisión:</td>
+                  <td className="border-double-r" style={{ fontWeight: '700' }}>{report.signatures?.asistenteSupervision}</td>
                 </tr>
                 <tr>
-                  <td style={{ color: '#555', fontSize: '6px' }}>Cliente:</td>
-                  <td style={{ fontWeight: '700' }}>{report.signatures?.cliente}</td>
+                  <td className="border-double-l" style={{ color: '#555', fontSize: '6px' }}>Cliente:</td>
+                  <td className="border-double-r" style={{ fontWeight: '700' }}>{report.signatures?.cliente}</td>
                 </tr>
               </tbody>
             </table>
@@ -277,16 +290,21 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
               <div className="sheet-obs-label">Observaciones:</div>
               <div className="sheet-obs-content">{report.signatures?.observaciones}</div>
             </div>
+
+            {/* TOTAL Row (Aligned with Row 43 on the right) */}
+            <div className="sheet-total-box">
+              TOTAL REVISADO: {report.totals?.revisado || 0} PIEZAS // TOTAL NOK: {report.totals?.nok || 0} PIEZAS // TOTAL RECUPERADAS: {report.totals?.recuperadas || 0} PIEZAS
+            </div>
           </div>
 
-          {/* Right Column: Reworked defects & Collaborators table */}
+          {/* Right Column (5 RW defects, 2 Collab headers, 7 Collab data rows = 14 rows total) */}
           <div className="sheet-bottom-right">
             <table className="sheet-defects-table-rw">
               <tbody>
                 {Array.from({ length: 5 }).map((_, idx) => (
                   <tr key={idx}>
-                    <td className="defect-label">Descripción del defecto Retrabajado #{idx+1}</td>
-                    <td className="defect-value">{report.defectsDesc?.rw?.[idx] || ''}</td>
+                    <td className="defect-label border-double-l">Descripción del defecto Retrabajado #{idx+1}</td>
+                    <td className="defect-value border-double-r">{report.defectsDesc?.rw?.[idx] || ''}</td>
                   </tr>
                 ))}
               </tbody>
@@ -295,35 +313,44 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
             <table className="sheet-collab-table">
               <thead>
                 <tr>
-                  <th className="collab-col-code" rowSpan={2}>Código de colaborador</th>
+                  <th className="collab-col-code border-double-l" rowSpan={2} colSpan={2}>Código de colaborador</th>
                   <th className="collab-col-hours" rowSpan={2}>Horas</th>
-                  <th className="collab-col-name" rowSpan={2}>Nombre legible del trabajador:</th>
+                  <th className="collab-col-name" rowSpan={2} colSpan={7}>Nombre legible del trabajador:</th>
                   <th className="collab-col-time" colSpan={2}>Entrada</th>
-                  <th className="collab-col-time" colSpan={2}>Salida</th>
+                  <th className="collab-col-time border-double-r" colSpan={2}>Salida</th>
                 </tr>
                 <tr>
                   <th style={{ fontSize: '5.5px', padding: '1px' }}>Hora</th>
                   <th style={{ fontSize: '5.5px', padding: '1px' }}>Minutos</th>
                   <th style={{ fontSize: '5.5px', padding: '1px' }}>Hora</th>
-                  <th style={{ fontSize: '5.5px', padding: '1px' }}>Minutos</th>
+                  <th className="border-double-r" style={{ fontSize: '5.5px', padding: '1px' }}>Minutos</th>
                 </tr>
               </thead>
               <tbody>
                 {paddedWorkers.map((worker, wIdx) => {
                   const hasWorker = worker.nombreTrabajador;
+                  const bottomClass = wIdx === 6 ? 'border-double-b' : '';
                   return (
                     <tr key={wIdx}>
-                      <td className="font-bold">{worker.codigoColaborador || ''}</td>
-                      <td className="font-bold">{worker.horas || ''}</td>
-                      <td className="text-left font-bold" style={{ paddingLeft: '6px' }}>{worker.nombreTrabajador || ''}</td>
+                      <td className={`font-bold border-double-l ${bottomClass}`} colSpan={2}>
+                        {worker.codigoColaborador || ''}
+                      </td>
+                      <td className={`font-bold ${bottomClass}`}>
+                        {worker.horas || ''}
+                      </td>
+                      <td className={`text-left font-bold ${bottomClass}`} colSpan={7} style={{ paddingLeft: '6px' }}>
+                        {worker.nombreTrabajador || ''}
+                      </td>
                       
-                      {/* Entrada */}
-                      <td className="font-bold">{hasWorker ? worker.entradaHora : ''}</td>
-                      <td className="font-bold">{hasWorker ? worker.entradaMinuto : ''}</td>
+                      {/* Entrada (HH:MM / :) */}
+                      <td className={`font-bold ${bottomClass}`} colSpan={2}>
+                        {formatWorkerTime(worker.entradaHora, worker.entradaMinuto)}
+                      </td>
                       
-                      {/* Salida */}
-                      <td className="font-bold">{hasWorker ? worker.salidaHora : ''}</td>
-                      <td className="font-bold">{hasWorker ? worker.salidaMinuto : ''}</td>
+                      {/* Salida (HH:MM / :) */}
+                      <td className={`font-bold border-double-r ${bottomClass}`} colSpan={2}>
+                        {formatWorkerTime(worker.salidaHora, worker.salidaMinuto)}
+                      </td>
                     </tr>
                   );
                 })}
@@ -332,11 +359,8 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
           </div>
         </div>
 
-        {/* 5. Footer totals bar */}
-        <div className="sheet-footer-row">
-          <div>
-            TOTAL REVISADO: {report.totals?.revisado || 0} PIEZAS // TOTAL NOK: {report.totals?.nok || 0} PIEZAS // TOTAL RECUPERADAS: {report.totals?.recuperadas || 0} PIEZAS
-          </div>
+        {/* 5. Footer Page Row (Row 44) */}
+        <div className="sheet-footer-row border-double-l border-double-r border-double-b">
           <div className="sheet-footer-code">
             SGQ-DOP-F010, 2025 V5R
           </div>
@@ -349,7 +373,7 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
     <>
       <div className="offscreen-container">
         <div ref={offscreenRef}>
-          {renderSheetMarkup(true)}
+          {renderSheetMarkup()}
         </div>
       </div>
 
@@ -365,7 +389,7 @@ export default function InspectionSheetPreview({ report, onDownloadComplete }) {
             marginRight: `-${1200 * (1 - scale)}px` 
           }}
         >
-          {renderSheetMarkup(false)}
+          {renderSheetMarkup()}
         </div>
       </div>
 
