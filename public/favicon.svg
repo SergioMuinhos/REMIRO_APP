@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="24" fill="url(#grad)" />
+  
+  <!-- Clipboard/Sheet Representation -->
+  <rect x="28" y="28" width="44" height="50" rx="6" fill="#ffffff" />
+  
+  <!-- Clip -->
+  <rect x="40" y="20" width="20" height="10" rx="3" fill="#cbd5e1" />
+  
+  <!-- Checkmark -->
+  <path d="M38 52 L46 60 L62 42" stroke="#10b981" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  
+  <!-- Decorative Lines -->
+  <line x1="38" y1="68" x2="62" y2="68" stroke="#e2e8f0" stroke-width="4" stroke-linecap="round" />
+</svg>
